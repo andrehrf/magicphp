@@ -7,3 +7,4 @@
 
     Storage::Set("app.charset", "UTF-8");
     Storage::Set("debug", true);
+    Storage::Set("app.minified", true);

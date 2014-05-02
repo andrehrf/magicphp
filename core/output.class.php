@@ -16,45 +16,45 @@
          * @access private
          */
         private $aHTTPStatus = array(100 => "HTTP/1.1 100 Continue",
-                                     101 => "HTTP/1.1 101 Switching Protocols",
-                                     200 => "HTTP/1.1 200 OK",
-                                     201 => "HTTP/1.1 201 Created",
-                                     202 => "HTTP/1.1 202 Accepted",
-                                     203 => "HTTP/1.1 203 Non-Authoritative Information",
-                                     204 => "HTTP/1.1 204 No Content",
-                                     205 => "HTTP/1.1 205 Reset Content",
-                                     206 => "HTTP/1.1 206 Partial Content",
-                                     300 => "HTTP/1.1 300 Multiple Choices",
-                                     301 => "HTTP/1.1 301 Moved Permanently",
-                                     302 => "HTTP/1.1 302 Found",
-                                     303 => "HTTP/1.1 303 See Other",
-                                     304 => "HTTP/1.1 304 Not Modified",
-                                     305 => "HTTP/1.1 305 Use Proxy",
-                                     307 => "HTTP/1.1 307 Temporary Redirect",
-                                     400 => "HTTP/1.1 400 Bad Request",
-                                     401 => "HTTP/1.1 401 Unauthorized",
-                                     402 => "HTTP/1.1 402 Payment Required",
-                                     403 => "HTTP/1.1 403 Forbidden",
-                                     404 => "HTTP/1.1 404 Not Found",
-                                     405 => "HTTP/1.1 405 Method Not Allowed",
-                                     406 => "HTTP/1.1 406 Not Acceptable",
-                                     407 => "HTTP/1.1 407 Proxy Authentication Required",
-                                     408 => "HTTP/1.1 408 Request Time-out",
-                                     409 => "HTTP/1.1 409 Conflict",
-                                     410 => "HTTP/1.1 410 Gone",
-                                     411 => "HTTP/1.1 411 Length Required",
-                                     412 => "HTTP/1.1 412 Precondition Failed",
-                                     413 => "HTTP/1.1 413 Request Entity Too Large",
-                                     414 => "HTTP/1.1 414 Request-URI Too Large",
-                                     415 => "HTTP/1.1 415 Unsupported Media Type",
-                                     416 => "HTTP/1.1 416 Requested range not satisfiable",
-                                     417 => "HTTP/1.1 417 Expectation Failed",
-                                     500 => "HTTP/1.1 500 Internal Server Error",
-                                     501 => "HTTP/1.1 501 Not Implemented",
-                                     502 => "HTTP/1.1 502 Bad Gateway",
-                                     503 => "HTTP/1.1 503 Service Unavailable",
-                                     504 => "HTTP/1.1 504 Gateway Time-out");
-        
+           101 => "HTTP/1.1 101 Switching Protocols",
+           200 => "HTTP/1.1 200 OK",
+           201 => "HTTP/1.1 201 Created",
+           202 => "HTTP/1.1 202 Accepted",
+           203 => "HTTP/1.1 203 Non-Authoritative Information",
+           204 => "HTTP/1.1 204 No Content",
+           205 => "HTTP/1.1 205 Reset Content",
+           206 => "HTTP/1.1 206 Partial Content",
+           300 => "HTTP/1.1 300 Multiple Choices",
+           301 => "HTTP/1.1 301 Moved Permanently",
+           302 => "HTTP/1.1 302 Found",
+           303 => "HTTP/1.1 303 See Other",
+           304 => "HTTP/1.1 304 Not Modified",
+           305 => "HTTP/1.1 305 Use Proxy",
+           307 => "HTTP/1.1 307 Temporary Redirect",
+           400 => "HTTP/1.1 400 Bad Request",
+           401 => "HTTP/1.1 401 Unauthorized",
+           402 => "HTTP/1.1 402 Payment Required",
+           403 => "HTTP/1.1 403 Forbidden",
+           404 => "HTTP/1.1 404 Not Found",
+           405 => "HTTP/1.1 405 Method Not Allowed",
+           406 => "HTTP/1.1 406 Not Acceptable",
+           407 => "HTTP/1.1 407 Proxy Authentication Required",
+           408 => "HTTP/1.1 408 Request Time-out",
+           409 => "HTTP/1.1 409 Conflict",
+           410 => "HTTP/1.1 410 Gone",
+           411 => "HTTP/1.1 411 Length Required",
+           412 => "HTTP/1.1 412 Precondition Failed",
+           413 => "HTTP/1.1 413 Request Entity Too Large",
+           414 => "HTTP/1.1 414 Request-URI Too Large",
+           415 => "HTTP/1.1 415 Unsupported Media Type",
+           416 => "HTTP/1.1 416 Requested range not satisfiable",
+           417 => "HTTP/1.1 417 Expectation Failed",
+           500 => "HTTP/1.1 500 Internal Server Error",
+           501 => "HTTP/1.1 501 Not Implemented",
+           502 => "HTTP/1.1 502 Bad Gateway",
+           503 => "HTTP/1.1 503 Service Unavailable",
+           504 => "HTTP/1.1 504 Gateway Time-out");
+
         /**
          * Namespace output 
          * 
@@ -141,6 +141,9 @@
                 $oThis->sBuffer = str_replace("{\$template}", $sTemplate, $sMasterpage);
             else
                 $oThis->sBuffer = $sTemplate;
+
+            if(Storage::Get("app.minified"))
+                $oThis->sBuffer = $oThis->SanitizeOutput($oThis->sBuffer);
             
             $oThis->IncludeTemplate();
         }
@@ -271,13 +274,13 @@
                     $oThis->sBuffer = str_replace($aMatches[0][0], $sBufferAppend, $oThis->sBuffer);
                 }
                 else{
-                   $oThis->sBuffer = str_replace($aMatches[0][0], "", $oThis->sBuffer); 
-                }            
-                
-                $Offset = $aMatches[0][1]+strlen($aMatches[0][0]);
-            }
-        }
-              
+                 $oThis->sBuffer = str_replace($aMatches[0][0], "", $oThis->sBuffer); 
+             }
+
+             $Offset = $aMatches[0][1]+strlen($aMatches[0][0]);
+         }
+     }
+
         /**
          * Function to handle variables required in the template
          * 
@@ -385,7 +388,7 @@
                 $Offset = $aMatches[0][1]+strlen($aMatches[0][0]);
             }
         }
-             
+
         /**
          * Function to return HTTP exceptions
          * 
@@ -414,7 +417,7 @@
          */
         public static function Redirect($sUrl){
             $oThis = self::CreateInstanceIfNotExists();
-           
+
             header($oThis->aHTTPStatus[301]);
             header("Location: ".$sUrl);
             die();
@@ -432,6 +435,31 @@
             $oThis->ReplaceVars(); 
             $oThis->RemoveUndefinedVars(); 
             $oThis->CheckConditions(); 
+        }
+
+
+        /**
+         * Function to minify output
+         * @access public
+         * @return  string
+         */
+        function SanitizeOutput($buffer) {
+
+            $search = array(
+                            '/\>[^\S ]+/s',  // strip whitespaces after tags, except space
+                            '/[^\S ]+\</s',  // strip whitespaces before tags, except space
+                            '/(\s)+/s'       // shorten multiple whitespace sequences
+                            );
+
+            $replace = array(
+                            '>',
+                            '<',
+                            '\\1'
+                            );
+
+            $buffer = preg_replace($search, $replace, $buffer);
+
+            return $buffer;
         }
         
         /**
@@ -452,7 +480,7 @@
             
             header('HTTP/1.1 200 OK');
             header("Content-Type: text/html; charset=" . strtoupper(Storage::Get("app.charset", "UTF-8")), true);
-                
+
             /*if(Storage::Get("debug", false)){
                 header("Expires: 0");
                 header("Cache-Control: no-cache, must-revalidate");
@@ -467,10 +495,10 @@
             
             header("MagicPHP 0.1b");
             header("Connection: close");*/
-                    
+
             try{
                 //var_dump($oThis->sBuffer);die();
-                
+
                 eval('?> ' . $oThis->sBuffer);
                 die();
             }
