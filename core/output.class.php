@@ -143,7 +143,7 @@
                 $oThis->sBuffer = $sTemplate;
 
             if(Storage::Get("app.minified"))
-                $oThis->sBuffer = $oThis->SanitizeOutput($oThis->sBuffer);
+                $oThis->SanitizeOutput($oThis->sBuffer);
             
             $oThis->IncludeTemplate();
         }
@@ -440,26 +440,26 @@
 
         /**
          * Function to minify output
+         * @static
          * @access public
-         * @return  string
+         * @param string $sBuffer HTML
+         * @return  void
          */
-        function SanitizeOutput($buffer) {
+        public static function SanitizeOutput($sBuffer) {
 
-            $search = array(
+            $aSearch = array(
                             '/\>[^\S ]+/s',  // strip whitespaces after tags, except space
                             '/[^\S ]+\</s',  // strip whitespaces before tags, except space
                             '/(\s)+/s'       // shorten multiple whitespace sequences
                             );
 
-            $replace = array(
+            $aReplace = array(
                             '>',
                             '<',
                             '\\1'
                             );
 
-            $buffer = preg_replace($search, $replace, $buffer);
-
-            return $buffer;
+            $oThis->sBuffer = preg_replace($aSearch, $aReplace, $sBuffer);
         }
         
         /**
