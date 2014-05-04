@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/andrehrf/magicphp.png?label=ready&title=Ready)](https://waffle.io/andrehrf/magicphp)
 MagicPHP
 ========
 
